@@ -38,7 +38,7 @@ _e('If you mix http and https read <a href="//www.tinywebgallery.com/blog/iframe
 } 
  
 function printDonation($devOptions, $evanto, $closedArray) {
-global $isFreemius;
+global $isFreemius, $isFreemiusMigration, $ai_fs;
 if ($evanto) {
       echo '<br/>
       <div>
@@ -59,11 +59,13 @@ if ($evanto) {
 			$status .= $viewsPercent . ' % of views for this month used.';
 		   
 			if ($viewsPercent > 100) {
-			 $status .= __('<><strong style="color: red"> The view li'.'mit is reached. A sm'.'all notice is shown be'.'low all iframes. Please reg'.'ister above.</strong>', 'advanced-iframe');
+			 $status .= __('<strong style="color: red"> The view li'.'mit is reached. A sm'.'all notice is shown be'.'low all iframes. Please reg'.'ister above.</strong>', 'advanced-iframe');
 			}	
 		} 
 		
-		printPurchaseCodeInput($devOptions, __('Purchase code', 'advanced-iframe' ), 'purchase_code', __('Please enter your purchase code here to finish the registration and unlock all features of advanced iframe pro. Your license key (purchase code) is located inside your digital purchase receipt on your <a href="https://codecanyon.net/downloads" target="_blank">CodeCanyon Downloads page</a>. To retrieve your license key, visit CodeCanyon.net/downloads and click "Download > License Certificate". Please note that your purchase code will be validated and logged together with relevant data to detect fraud. Also see the privacy policy here: https://www.tinywebgallery.com/blog/privacy-policy for details. Please do not share your purchase code as it will be blocked when misuse will be detected.', 'advanced-iframe') . $status);
+		$freeAdditional = $isFreemiusMigration ? __('<br><br>Advanced iframe pro has migrated to freemius. And this are the reasons why you should also move your existing license:<span>Automatic updates!</span><span>Different plans -> monthly, yearly, live time</span><span>Multi site support -> 1,5, unlimited sites plans available </span><span>You can switch plans or add additional site licenses how you need it.</span><span>Better support rules as for codecanyon. If you choose a subscription plan you get support as long as you plan runs.</span><br>If you have a codecanyon license already <a href="xxx">you can migrate it to freemius.</a><br><br>There is also a very good reason why I migrated: The fees are simply much lower than on  codecanyon (7% vs. 30%-70%!) and I never liked that codecanyon does not offer auto update and multi site licenses which many people complained about. This is also the reason why the live time license on freemius is cheaper then the one on codecanyon!</p><p>Just check by yourself: <a href="https://freemius.com/wordpress/features-comparison/" target="_blank">https://freemius.com/wordpress/features-comparison/</a>', 'advanced-iframe' ) : "";
+
+		printPurchaseCodeInput($devOptions, __('Purchase code', 'advanced-iframe' ), 'purchase_code', __('Please enter your purchase code here to finish the registration and unlock all features of advanced iframe pro. Your license key (purchase code) is located inside your digital purchase receipt on your <a href="https://codecanyon.net/downloads" target="_blank">CodeCanyon Downloads page</a>. To retrieve your license key, visit CodeCanyon.net/downloads and click "Download > License Certificate". Please note that your purchase code will be validated and logged together with relevant data to detect fraud. Also see the privacy policy here: https://www.tinywebgallery.com/blog/privacy-policy for details. Please do not share your purchase code as it will be blocked when misuse will be detected.', 'advanced-iframe') . $status . $freeAdditional);
 		echo '</table>';
 		aiPostboxClose();
 	}
@@ -123,7 +125,7 @@ if ($evanto) {
       printTrueFalse(false,$devOptions, __('Load jQuery as dependency', 'advanced-iframe'), 'load_jquery', __('By default jQuery is loaded as dependency. If you have a theme or another plugin that does not stick to the Wordpress way to load the scripts you might have to disable the dependency. This avoids that jQuery is loaded again and other plugins do maybe not work anymore.', 'advanced-iframe'), true);   
       printTrueFalse(false,$devOptions, __('Fix WordPress 5.5 page parameter change', 'advanced-iframe'), 'remove_page_param_from_query', __('In Wordpress 5.5 the page parameter returns with a 301 redirect if not used the WordPress way. Setting this to true does allow to still use the parameter page in the url with non numerical characters. The recommended way is to not use page as parameter in the url at all.', 'advanced-iframe'), 'false');
 	  printTrueFalse(false,$devOptions, __('Prevent early shortcode execution', 'advanced-iframe'), 'optimize_rendering', __('Some plugins like older version of all-in-one-seo do evaluate shortcodes for internal use. This slows down the page. Advanced iframe was detecting this and prevented this rendering. Till the theme Twenty Twenty-One this worked fine out of the box. Unfortunately in the theme Twenty Twenty-Two the iframe shortcode is evaluated before the HTML outputs starts. And then no iframe is rendered at all. Because of this and as all-in-one-seo also fixed this on their side, this optimization is disabled by default! The iframe is then rendered in all situations. Set this setting to "Yes" and <strong>test if the iframe is still shown</strong>. You can check if you need this setting:<span>Set this setting to Yes.</span><span>Enable on the options page "Debug Javascript".</span><span>Go to a page with an iframe and view the source code.</span><span>If you see &lt;!-- advanced iframe not rendered --&gt; in the HTML <strong>AND your iframe is still shown</strong> then you should use the optimization if possible. Otherwise you can use "No" here without any disadvantage. Enabling the debug will also show the rendering time of advanced iframe like this: &lt;!-- advanced iframe rendered in 0.000563 s --&gt;</span>', 'advanced-iframe'), 'false');
-      printTrueFalse(false,$devOptions, __('Enable temporary ai content pages', 'advanced-iframe'), 'enable_ai_content_pages', __('This is an advanced feature where the content of your page is not shown directly but a dynamic pages is created. See the demo <a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe">Display content in iframe</a> how this us used and configured. Please note that you need to reload your page once after the save because Wordpress executes the needed hooks in the wrong order.', 'advanced-iframe'), 'false', '//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe');
+	  printTrueFalse(false,$devOptions, __('Enable temporary ai content pages', 'advanced-iframe'), 'enable_ai_content_pages', __('This is an advanced feature where the content of your page is not shown directly but a dynamic pages is created. See the demo <a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe">Display content in iframe</a> how this us used and configured. Please note that you need to reload your page once after the save because Wordpress executes the needed hooks in the wrong order.', 'advanced-iframe'), 'false', '//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe');
   	 echo '</table>';
       aiPostboxClose();
 
@@ -169,13 +171,21 @@ echo '<br/>
   </div><h2 class="options-h2">';
   _e('Advanced iFrame - Upgrading to Advanced iFrame Pro, quick start guide, plugin options', 'advanced-iframe');
   echo '</h2>';
-   aiPostboxOpen("id-options-pro", "Upgrading to Advanced iFrame Pro", $closedArray);  
-  _e('<p>Advanced iframe is <strong>free for personal use</strong> and the Pro version a bargain for your business. The personal version does already contain many of the cool features of the Pro version. It has a limit of 10.000 views a month without a notice text which should normally not been hit by a personal website.</p>', 'advanced-iframe' );
+  aiPostboxOpen("id-options-pro", "Upgrading to Advanced iFrame Pro", $closedArray);  
+  if ($isFreemiusMigration) {
+      _e('<p>Advanced iframe is <strong>free for personal use</strong> and the Pro version a bargain for your business. The personal version does already contain many of the cool features of the Pro version. It has a limit of 10.000 views a month without a notice text which should normally not been hit by a personal website.</p>', 'advanced-iframe' );
+  } else {
+	   _e('<p>Advanced iframe is <strong>free for personal use</strong> and the Pro version a bargain for your business. The personal version does already contain many of the cool features of the Pro version. It has after opt-in unlimited views and after 10.000 views/month a small "powered by" notice which should normally not been hit by a personal website.</p>', 'advanced-iframe' );
+  }
 
-echo '<div id="first" class="signup_account_container signup_account_container_active" style="cursor: default;" title="';
+$isRegistered = $isFreemiusMigration && $ai_fs->is_registered() && $ai_fs->is_tracking_allowed();
+$freemius_css = ($isFreemiusMigration) ? " signup_account_container_freemius" : "";
+$freemius_inner_css = ($isFreemiusMigration) ? " signup_inner_freemius" : "";
+
+echo '<div id="first" class="signup_account_container signup_account_container_active'.$freemius_css.'" style="cursor: default;" title="';
 _e('Free - For personal and non-commercial sites', 'advanced-iframe');
 echo '">
-			<div class="signup_inner">
+			<div class="signup_inner'.$freemius_inner_css.'">
 				<div class="signup_inner_plan">';
         _e(' ', 'advanced-iframe');
         echo '</div>
@@ -188,19 +198,38 @@ echo '">
         _e('For personal and non-commercial sites', 'advanced-iframe');
         echo '</div>
 				<div class="signup_inner_desc">';
-        _e('10.000 views/month without notice*', 'advanced-iframe');
-        echo '</div>
-				<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40mdempfle%2ede&item_name=advanced%20iframe&item_number=Support%20Open%20Source&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8" target="_blank" id="plan_button_pro" class="signup_inner_button">';
-         _e('Donate with Paypal', 'advanced-iframe');
-        echo '</a>
-			</div>
+        if ($isFreemiusMigration) {
+		  _e('No OPT-IN: 5000 views/month<br>OPT-IN: Unlimited views*', 'advanced-iframe');
+        } else {
+		  _e('10.000 views/month without notice*', 'advanced-iframe');
+		}
+		echo '</div>';
+		
+		if ($isFreemiusMigration) {
+			if ($isRegistered) {
+				echo '<a href="#" id="opt-in-button" class="signup_inner_button opt_in_done" title="">';
+                _e('Opt-In done<br><strong>unlimited</strong> views*', 'advanced-iframe');
+			    echo '</a>';
+			} else {
+			    $optinUrl = $ai_fs->get_reconnect_url();	
+			    echo '<a href="'.$optinUrl.'" id="opt-in-button" class="signup_inner_button" title="">';
+                _e('Opt-In for <br><strong>Unlimited</strong> views', 'advanced-iframe');
+			     echo '</a>';
+			}
+			echo '<br>';	
+		}
+		echo '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40mdempfle%2ede&item_name=advanced%20iframe&item_number=Support%20Open%20Source&no_shipping=0&no_note=1&tax=0&currency_code=EUR&lc=EN&bn=PP%2dDonationsBF&charset=UTF%2d8" target="_blank" id="plan_button_pro" class="signup_inner_button" title="">';
+		_e('Donate with Paypal', 'advanced-iframe');
+		
+		echo '</a>';
+		echo '</div>
     </div>
       ';
 echo '
-   <div  class="signup_account_container signup_account_container_active" style="cursor: default;" title="';
+   <div  class="signup_account_container signup_account_container_active'.$freemius_css.'" style="cursor: default;" title="';
    _e('Pro - For commercial, business and professional sites', 'advanced-iframe');
    echo '">
-			<div class="signup_inner">
+			<div class="signup_inner'.$freemius_inner_css.'">
 				<div class="signup_inner_plan">';
         _e(' ', 'advanced-iframe');
         echo '</div>
@@ -212,16 +241,26 @@ echo '
         echo '</div>
 				<div class="signup_inner_desc">';
         _e('+ <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/advanced-iframe-comparison-chart" target="_blank">Many additional features!</a><br />&nbsp;', 'advanced-iframe');
-        echo '</div>
-				<a href="https://1.envato.market/OdoBZ" target="_blank" id="plan_button_pro" class="signup_inner_button">';
+        echo '</div>';
+		if ($isFreemiusMigration) {
+		    $trialUrl =  $ai_fs->get_trial_url();
+			$pricingUrl = $ai_fs->get_upgrade_url();
+			echo '<a href="' . $trialUrl . '&trial=true" id="plan_button_pro" class="signup_inner_button" title="">';
+				_e('Start 30 days trial', 'advanced-iframe');
+			echo '</a><br>';
+			echo '<a href="' . $pricingUrl . '" target="_blank" id="plan_button_pro" class="signup_inner_button" title="">';
+			_e('Upgrade to <br><strong>PRO</strong>', 'advanced-iframe');
+		} else {
+			echo '<a href="https://1.envato.market/OdoBZ" target="_blank" id="plan_button_pro" class="signup_inner_button">';
         _e('Get pro at Codecanyon', 'advanced-iframe');
+		}
         echo '</a>
 			</div>
 		</div>
 ';
 echo '
-       <div id="last" class="signup_account_container signup_account_container_active" style="cursor: default;">
-			<div class="signup_inner">
+       <div id="last" class="signup_account_container signup_account_container_active'.$freemius_css.'" style="cursor: default;">
+			<div class="signup_inner'.$freemius_inner_css.'">
 				<div class="signup_inner_plan">';
         _e('Pro Version Benefits', 'advanced-iframe');
         echo '</div>
@@ -229,18 +268,53 @@ echo '
 				<div class="signup_inner_desc">
            <ul class="pro"><li>';
            _e('<a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/show-only-a-part-of-the-iframe" target="_blank">Show/Hide specific areas of the iframe</a> if the iframe is on a different domain<br /><a target="_blank" href="//www.mdempfle.de/examples/configurator/advanced-iframe-area-selector.html">Show the graphical selector</a></li><li><a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/widgets" target="_blank">Widget support</a>, <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/change-links-targets" target="_blank">change link targets</a></li><li>External workaround supports <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/external-workaround-auto-height-and-css-modifications" target="_blank">iframe modifications</a> and <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/responsive-iframes" target="_blank">responsive iframes</a></li><li><a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/browser-detection" target="_blank">Browser dependant settings</a>, <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/lazy-loading" target="_blank">lazy load</a></li><li>No view limit, <a href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo/zoom-iframe-content" target="_blank">zoom</a>, <a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-standalone">standalone version!</a></li><li><a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-pro-demo">See the pro demo</a><li><a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/advanced-iframe-comparison-chart">Compare versions for all features</a>', 'advanced-iframe');
-           echo '</li></ul>
+           echo '</li></ul>';
+		   if ($isFreemiusMigration) { 		  
+			  echo '<ul class="pro"><li>';
+			   _e('Multi site licenses', 'advanced-iframe');
+			   echo '</li><li>';
+			   _e('Monthly, yearly, live time licenses', 'advanced-iframe');
+			   echo '</li></ul>';
+		   }
+		   echo '
         </div>
 			</div>
 		</div>
 
 <div class="clear"></div><br />
 ';
-
+if ($isFreemiusMigration) {
+_e('<p>* After 10.000 views/month the iframe is still working and below all iframes a small "powered by" notice with a link to the pro version is shown. If you hit this limit and you qualify for the free license please contact <a href="//www.tinywebgallery.com/en/about.php" target="_blank">me</a> to get a version with a higher limit.</p>', 'advanced-iframe');	
+} else {
 _e('<p>* After 10.000 views/month the iframe is still working but below all iframes a small "powered by" notice with a link to the pro version is shown. If you hit this limit and you qualify for the free license please contact <a href="//www.tinywebgallery.com/en/about.php" target="_blank">me</a> to get a version with a higher limit.<br/>If you use the Advanced iFrame on a non personal website please first test the plugin carefully before buying. After that it is quick and painless to get Advanced iFrame Pro. Simply get <strong><a target="_blank" href="https://1.envato.market/OdoBZ">Advanced iFrame Pro on CodeCanyon</a></strong> and be pro in a few minutes!</p>', 'advanced-iframe');
+}
 
 _e('<p><strong>Current status</strong>: ', 'advanced-iframe');
-echo get_option('default_a_options') / 100 . ' % of views for this month used.';
+if ($isFreemiusMigration) {
+	
+	$viewsPercent = get_option('default_a_options') / 100;
+			$status .= $viewsPercent . ' % of views for this month used.';
+		   
+			if ($viewsPercent > 100) {
+			 $status .= __('<strong style="color: red"> The view li'.'mit is reached. A sm'.'all notice is shown be'.'low all iframes. Please reg'.'ister above.</strong>', 'advanced-iframe');
+			}	
+	
+    if ($isRegistered) {
+		$viewsPercent = get_option('default_a_options') / 100;
+	    echo $viewsPercent . ' % of views for this month used until a small notice is shown.';
+		if ($viewsPercent > 100) {
+		    _('<strong style="color: red"> 10.000 views are reached. A sm'.'all notice is shown be'.'low all iframes. Please reg'.'ister above.</strong>', 'advanced-iframe');
+		}	
+	} else {
+		$viewsPercent = get_option('default_a_options') / 50;
+		echo $viewsPercent . ' % of views for this month used. Please OPT-IN to get unlimited views*';
+		if ($viewsPercent > 100) {
+		    _('<strong style="color: red"> 5.000 views are reached. Your iframes are NOT shown anymore. Please OPT-IN to get unlimited views*</strong>', 'advanced-iframe');
+		}	
+	}
+} else {
+    echo get_option('default_a_options') / 100 . ' % of views for this month used.';
+}
 _e('</p>', 'advanced-iframe');
 aiPostboxClose();	   
 
@@ -286,6 +360,8 @@ printQuickstartGuide($closedArray);
       printTrueFalse(false,$devOptions, __('Include ai.js in the footer', 'advanced-iframe'), 'include_scripts_in_footer', __('If you include ai.js to the footer you can include jQuery also at the footer. This can cause errors that needed Javascript is not found!!! This can be the case if the iframe loads very fast and the needed callbacks are not available. Please check the browser console (F12). If you see errors that advanced iframe methods are not found: Set this to false. The ai.js has also to be in the footer if it should only be loaded when the shortcode is on the page. This setting cannot be set as shortcode! There is an additional shortcode attribute called include_scripts_in_content="true". This is only needed in the special case if you use the page with content only (like using the plugin "Show Content Only" with "Content + Styles" mode). Then ai.js is directly rendered before the iframe. See demo <a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/same-domain-wrapped-auto-height">wrapped auto height</a>.', 'advanced-iframe'));
       printTrueFalse(false,$devOptions, __('Load jQuery as dependency', 'advanced-iframe'), 'load_jquery', __('By default jQuery is loaded as dependency. If you have a theme or another plugin that does not stick to the Wordpress way to load the scripts you might have to disable the dependency. This avoids that jQuery is loaded again and other plugins do maybe not work anymore.', 'advanced-iframe'), true);
 	  printTrueFalse(false,$devOptions, __('Fix WordPress 5.5 page parameter change', 'advanced-iframe'), 'remove_page_param_from_query', __('In Wordpress 5.5 the page parameter returns with a 301 redirect if not used the WordPress way. Setting this to true does allow to still use the parameter page in the url with non numerical characters. The recommended way is to not use page as parameter in the url at all. ', 'advanced-iframe'), 'false');
+	  printTrueFalse(false,$devOptions, __('Prevent early shortcode execution', 'advanced-iframe'), 'optimize_rendering', __('Some plugins like older version of all-in-one-seo do evaluate shortcodes for internal use. This slows down the page. Advanced iframe was detecting this and prevented this rendering. Till the theme Twenty Twenty-One this worked fine out of the box. Unfortunately in the theme Twenty Twenty-Two the iframe shortcode is evaluated before the HTML outputs starts. And then no iframe is rendered at all. Because of this and as all-in-one-seo also fixed this on their side, this optimization is disabled by default! The iframe is then rendered in all situations. Set this setting to "Yes" and <strong>test if the iframe is still shown</strong>. You can check if you need this setting:<span>Set this setting to Yes.</span><span>Enable on the options page "Debug Javascript".</span><span>Go to a page with an iframe and view the source code.</span><span>If you see &lt;!-- advanced iframe not rendered --&gt; in the HTML <strong>AND your iframe is still shown</strong> then you should use the optimization if possible. Otherwise you can use "No" here without any disadvantage. Enabling the debug will also show the rendering time of advanced iframe like this: &lt;!-- advanced iframe rendered in 0.000563 s --&gt;</span>', 'advanced-iframe'), 'false');
+	  printTrueFalse(false,$devOptions, __('Enable temporary ai content pages', 'advanced-iframe'), 'enable_ai_content_pages', __('This is an advanced feature where the content of your page is not shown directly but a dynamic pages is created. See the demo <a target="_blank" href="//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe">Display content in iframe</a> how this us used and configured. Please note that you need to reload your page once after the save because Wordpress executes the needed hooks in the wrong order.', 'advanced-iframe'), 'false', '//www.tinywebgallery.com/blog/advanced-iframe/demo-advanced-iframe-2-0/show-content-in-iframe');
       echo '</table>';
       aiPostboxClose();
 	   
